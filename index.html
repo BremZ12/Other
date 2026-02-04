@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sebuah Surat</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:'Georgia', serif;
+    background:#04050a;
+    color:#f5f5f5;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+.bg{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:
+        radial-gradient(circle at 25% 20%, rgba(255,140,170,.15), transparent 40%),
+        radial-gradient(circle at 75% 80%, rgba(140,120,255,.15), transparent 45%),
+        linear-gradient(160deg,#04050a,#0b0f25,#02030a);
+}
+
+/* CONTAINER */
+.container{
+    max-width:720px;
+    margin:auto;
+    padding:90px 22px 140px;
+}
+
+/* LETTER CARD */
+.card{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(14px);
+    border-radius:26px;
+    padding:44px 30px;
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.85),
+        inset 0 0 40px rgba(255,255,255,.04);
+}
+
+/* TITLE */
+h1{
+    text-align:center;
+    letter-spacing:2px;
+    font-weight:normal;
+    margin-bottom:50px;
+}
+
+/* ===== INK EFFECT ===== */
+
+.ink{
+    border-right:2px solid rgba(255,255,255,.7);
+    white-space:pre-wrap;
+    overflow:hidden;
+}
+
+/* paragraphs spacing */
+p{
+    font-size:17.5px;
+    line-height:2;
+    margin:28px 0;
+}
+
+/* caret blink */
+@keyframes blink{
+    50%{border-color:transparent}
+}
+
+.signature{
+    margin-top:70px;
+    font-style:italic;
+    opacity:.9;
+}
+
+/* hearts */
+.heart{
+    position:fixed;
+    bottom:-20px;
+    font-size:12px;
+    color:#ff9ecb;
+    opacity:.18;
+    z-index:-1;
+    animation:floatUp linear forwards;
+}
+
+@keyframes floatUp{
+    to{
+        transform:translateY(-120vh);
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="container">
+    <div class="card">
+
+        <h1>Sebuah Surat Untukmu</h1>
+
+        <p class="ink" data-text="Aku sempat berpikir untuk menyimpan semua ini sendirian."></p>
+
+        <p class="ink" data-text="Bukan karena perasaan ini kecil — justru karena ia terasa terlalu berarti untuk diucapkan sembarangan."></p>
+
+        <p class="ink" data-text="Ada banyak orang yang datang dan pergi dalam hidupku. Namun entah bagaimana, kamu tidak terasa seperti 'seseorang yang lewat'."></p>
+
+        <p class="ink" data-text="Kamu terasa seperti rumah — tempat yang bahkan belum aku miliki, tapi sudah membuatku ingin pulang."></p>
+
+        <p class="ink" data-text="Aku menyukai caramu ada. Tidak berisik, tidak memaksa, tidak mencoba menjadi siapa-siapa."></p>
+
+        <p class="ink" data-text="Dan tanpa aku sadari... perlahan kamu menjadi bagian dari hal-hal kecil yang selalu ingin aku ulang."></p>
+
+        <p class="ink" data-text="Mungkin kamu tidak pernah meminta untuk dipikirkan sejauh ini. Tapi perasaan tidak selalu menunggu izin untuk tumbuh."></p>
+
+        <p class="ink" data-text="Karena itu malam ini aku memilih jujur, daripada terus bertanya-tanya bagaimana jadinya jika aku diam selamanya."></p>
+
+        <p class="ink" data-text="Aku jatuh cinta padamu."></p>
+
+        <p class="ink" data-text="Bukan cinta yang tergesa. Bukan juga karena kesepian. Tapi cinta yang datang bersama ketenangan — perasaan langka yang membuatku yakin tanpa harus meyakinkan diri sendiri."></p>
+
+        <p class="ink" data-text="Aku tidak datang membawa rencana besar yang terdengar indah. Aku hanya datang membawa niat yang serius."></p>
+
+        <p class="ink" data-text="Jika suatu hari kamu ingin melangkah pelan, aku berharap aku boleh berjalan di sampingmu — bukan di depan, bukan di belakang."></p>
+
+        <p class="ink" data-text="Namun jika hatimu belum menuju ke arahku, jangan merasa bersalah. Perasaan tidak pernah salah, bahkan ketika tidak berbalas."></p>
+
+        <p class="ink" data-text="Aku tetap bersyukur... karena dari sekian luasnya dunia, aku dipertemukan dengan seseorang sepertimu."></p>
+
+        <p class="ink" data-text="Dan jujur saja — mengenalmu sudah menjadi salah satu hal terindah yang pernah terjadi padaku."></p>
+
+        <div class="signature ink" data-text="Dengan perasaan yang tidak ingin lagi kusembunyikan,
+
+Adalah pokoknya"></div>
+
+    </div>
+</div>
+
+<script>
+
+/* ===== TYPEWRITER INK ===== */
+
+const elements=document.querySelectorAll(".ink");
+
+let speed=32; // natural writing speed
+
+async function type(el){
+    const text=el.getAttribute("data-text");
+    el.style.animation="blink 1s infinite";
+
+    for(let i=0;i<text.length;i++){
+        el.textContent += text[i];
+        await new Promise(r=>setTimeout(r,speed));
+    }
+
+    el.style.borderRight="none";
+}
+
+/* chain typing so it feels written continuously */
+async function startWriting(){
+    for(const el of elements){
+        await type(el);
+        await new Promise(r=>setTimeout(r,400));
+    }
+}
+
+setTimeout(startWriting,900);
+
+
+/* subtle hearts */
+setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=(10+Math.random()*6)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),16000);
+},2300);
+
+</script>
+
+</body>
+</html>

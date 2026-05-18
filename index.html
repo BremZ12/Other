@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sebuah Surat Kerajaan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#1a1408;
+ color:#3b2b1a;
+ font-family:'Cinzel',serif;
+ overflow-y:auto;
+ -webkit-tap-highlight-color: transparent;
+}
+
+/* glow background */
+body::before{
+ content:"";
+ position:fixed;inset:0;
+ background:radial-gradient(circle at 50% 50%, rgba(255,215,120,.2), transparent 70%);
+ animation:glowMove 8s infinite alternate ease-in-out;
+ z-index:-2;
+}
+
+/* ending glow */
+body.end::before{
+ background:radial-gradient(circle at 50% 50%, rgba(255,215,120,.45), transparent 70%);
+}
+
+@keyframes glowMove{
+ 0%{transform:translateY(-20px)}
+ 100%{transform:translateY(20px)}
+}
+
+.container{
+ display:flex;
+ justify-content:center;
+ align-items:flex-start;
+ min-height:100vh;
+ padding:40px 10px 120px;
+}
+
+.scroll{
+ width:92%;
+ max-width:680px;
+ background:linear-gradient(#f5e6c8,#e8d3a3);
+ border-radius:10px;
+ box-shadow:0 20px 60px rgba(0,0,0,.8);
+ position:relative;
+ padding:40px 20px;
+ transform:scaleY(0);
+ transform-origin:top;
+ animation:unroll 1.6s ease forwards;
+}
+
+@keyframes unroll{
+ to{transform:scaleY(1)}
+}
+
+.scroll::before,.scroll::after{
+ content:"";
+ position:absolute;left:0;right:0;height:10px;
+ background:linear-gradient(90deg,#c9a44d,#ffd700,#c9a44d);
+}
+.scroll::before{top:0}
+.scroll::after{bottom:0}
+
+/* FONT DIPERBESAR */
+h1{
+ text-align:center;
+ color:#7a5c1e;
+ margin-bottom:30px;
+ font-size:24px;
+}
+
+p{
+ font-size:19px;
+ line-height:1.9;
+ margin:18px 0;
+ letter-spacing:0.5px;
+}
+
+.ink{
+ border-right:2px solid rgba(80,60,20,.7);
+ white-space:pre-wrap;
+ overflow:hidden;
+ font-family:'Great Vibes',cursive;
+ letter-spacing:0.5px;
+ font-size:20px;
+}
+
+@keyframes blink{50%{border-color:transparent}}
+
+/* HIGHLIGHT EFFECT */
+.highlight{
+ animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+ 0%{transform:scale(1)}
+ 50%{transform:scale(1.04)}
+ 100%{transform:scale(1)}
+}
+
+.signature{
+ margin-top:40px;
+ font-size:22px;
+}
+
+/* candles */
+.candle{position:fixed;bottom:40px;width:16px;height:60px;background:#eee;border-radius:5px}
+.candle.left{left:10px}
+.candle.right{right:10px}
+
+.flame{
+ width:10px;height:16px;
+ background:radial-gradient(circle,#ffd700,#ff8c00);
+ border-radius:50%;
+ position:absolute;
+ top:-16px;left:3px;
+ animation:flicker .2s infinite alternate;
+}
+@keyframes flicker{
+ from{transform:scale(1)}
+ to{transform:scale(1.2) translateY(-2px)}
+}
+
+#choiceBox{
+ position:fixed;
+ bottom:20px;
+ left:0;right:0;
+ display:flex;
+ justify-content:center;
+ gap:10px;
+ opacity:0;
+ pointer-events:none;
+ transition:.6s;
+ padding:0 10px;
+}
+
+button{
+ flex:1;
+ max-width:200px;
+ padding:14px;
+ border:none;
+ border-radius:20px;
+ font-weight:bold;
+ font-size:14px;
+ cursor:pointer;
+ transition:.2s;
+}
+
+#acceptBtn{
+ background:linear-gradient(#ffd700,#c9a44d);
+}
+
+#rejectBtn{
+ background:#555;
+ color:#fff;
+ position:relative;
+}
+
+button:active{
+ transform:scale(0.95);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="scroll">
+
+    <h1>Sebuah Surat</h1>
+
+    <p class="ink" data-text="Aku sudah banyak berpikir tentang kita."></p>
+    <p class="ink" data-text="Bukan cuma sekali dua kali, tapi berkali-kali… sampai kadang aku sendiri lelah, tapi tetap nggak bisa berhenti—tentang kamu."></p>
+
+    <p class="ink" data-text="Tentang semua yang sudah kita lewati."></p>
+    <p class="ink" data-text="Tentang percakapan sederhana yang selalu terasa berarti."></p>
+    <p class="ink" data-text="Tentang tawa kecil yang sekarang cuma bisa aku ingat, bukan aku dengar langsung."></p>
+    <p class="ink" data-text="Dan tentang kamu… yang jauh di sana, tapi entah kenapa terasa begitu dekat di hati aku."></p>
+
+    <p class="ink" data-text="Lucu ya… kita dipisahkan jarak sejauh ini, tapi justru kamu yang paling aku rasakan kehadirannya."></p>
+
+    <p class="ink" data-text="Aku nggak akan bohong, ini nggak mudah."></p>
+    <p class="ink" data-text="Ada malam-malam di mana aku cuma bisa menatap layar, berharap waktu berjalan lebih cepat supaya bisa lebih dekat sama kamu."></p>
+    <p class="ink" data-text="Ada rindu yang datang tiba-tiba, tanpa aba-aba, dan nggak bisa aku peluk untuk meredakannya."></p>
+    <p class="ink" data-text="Ada saat di mana aku butuh kamu… tapi yang ada cuma jarak."></p>
+
+    <p class="ink" data-text="Dan di situ aku sadar, apa yang aku rasakan ini… bukan hal yang biasa."></p>
+
+    <p class="ink" data-text="Aku takut kehilangan kamu."></p>
+    <p class="ink" data-text="Takut kalau suatu hari kita lelah sama jarak ini."></p>
+    <p class="ink" data-text="Takut kalau semua yang kita bangun perlahan memudar hanya karena kita nggak berada di tempat yang sama."></p>
+
+    <p class="ink" data-text="Tapi lebih dari itu semua… aku juga sadar satu hal—aku nggak mau menyerah sama kamu."></p>
+
+    <p class="ink" data-text="Aku nggak mau hubungan ini cuma jadi cerita singkat yang nanti kita kenang lalu kita lepaskan."></p>
+    <p class="ink" data-text="Aku nggak mau kita cuma jadi dua orang yang pernah saling mencintai, tapi gagal bertahan."></p>
+
+    <!-- HIGHLIGHT -->
+    <p class="ink highlight" data-text="Karena buat aku, kamu bukan sekadar “pernah”. Kamu adalah seseorang yang ingin aku jadikan “selalu”."></p>
+
+    <p class="ink" data-text="Dan aku percaya… semua jarak ini bukan untuk memisahkan kita selamanya."></p>
+    <p class="ink" data-text="Semua rindu ini bukan untuk sia-sia."></p>
+    <p class="ink" data-text="Kita sedang berjalan ke satu titik yang sama—hari di mana kita akhirnya benar-benar bertemu, tanpa layar, tanpa jeda, tanpa jarak."></p>
+
+    <p class="ink" data-text="Hari di mana aku bisa melihat kamu secara nyata, bukan cuma lewat panggilan."></p>
+    <p class="ink" data-text="Hari di mana aku bisa menggenggam tangan kamu, dan memastikan kalau semua penantian ini benar-benar ada akhirnya."></p>
+
+    <p class="ink" data-text="Makanya aku ingin sesuatu yang lebih jelas. Lebih kuat. Lebih pasti."></p>
+
+    <p class="ink" data-text="Aku ingin mengikat hubungan ini dengan keseriusan."></p>
+    <p class="ink" data-text="Bukan untuk membatasi kamu, tapi supaya kita punya alasan untuk tetap bertahan saat semuanya terasa berat."></p>
+    <p class="ink" data-text="Bukan untuk mengekang, tapi supaya kita sama-sama yakin… bahwa sejauh apa pun jarak ini, kita tetap memilih satu sama lain sampai akhirnya kita benar-benar bersama."></p>
+
+    <p class="ink" data-text="Aku ingin kita punya tujuan yang sama."></p>
+    <p class="ink" data-text="Untuk terus bertahan hari ini… demi hari di mana kita nggak perlu lagi berpisah."></p>
+
+    <!-- HIGHLIGHT -->
+    <p class="ink highlight" data-text="Aku memilih kamu. Dengan semua jarak ini. Dengan semua rindu ini. Dengan semua kemungkinan yang nggak pasti ini."></p>
+
+    <p class="ink" data-text="Karena di antara semua hal yang nggak bisa aku kendalikan… memilih kamu adalah hal yang paling yakin yang pernah aku lakukan."></p>
+
+    <p class="ink" data-text="Jadi kalau kamu juga merasakan hal yang sama…"></p>
+    <p class="ink" data-text="kalau kamu juga capek sama jarak tapi tetap mau bertahan…"></p>
+    <p class="ink" data-text="kalau kamu juga menunggu hari di mana kita akhirnya bertemu dan nggak perlu berpisah lagi…"></p>
+
+    <p class="ink" data-text="Aku ingin kita saling mengikat."></p>
+    <p class="ink" data-text="Dengan komitmen. Dengan kejujuran."></p>
+    <p class="ink" data-text="Dan dengan niat untuk benar-benar sampai—bukan cuma bertahan, tapi sampai pada akhirnya kita berdiri di tempat yang sama, bersama."></p>
+
+    <p class="ink" data-text="Kamu mau… bertahan, menunggu, dan sampai sejauh itu sama aku?"></p>
+
+    <div class="signature ink" data-text="Dengan perasaan yang tulus,
+
+Aku"></div>
+
+  </div>
+</div>
+
+<div class="candle left"><div class="flame"></div></div>
+<div class="candle right"><div class="flame"></div></div>
+
+<div id="choiceBox">
+  <button id="acceptBtn">Aku Mau Bertahan</button>
+  <button id="rejectBtn">Aku Belum Siap</button>
+</div>
+
+<script>
+const elements=document.querySelectorAll('.ink');
+let speed=28;
+
+async function type(el){
+ const text=el.getAttribute('data-text');
+ el.style.animation='blink 1s infinite';
+ for(let i=0;i<text.length;i++){
+  el.textContent+=text[i];
+  await new Promise(r=>setTimeout(r,speed));
+ }
+ el.style.borderRight='none';
+}
+
+async function startWriting(){
+ for(const el of elements){
+  await type(el);
+  await new Promise(r=>setTimeout(r,300));
+ }
+
+ // ENDING GLOW
+ document.body.classList.add("end");
+
+ document.getElementById('choiceBox').style.opacity=1;
+ document.getElementById('choiceBox').style.pointerEvents='auto';
+}
+
+setTimeout(startWriting,1800);
+
+const phone='62388027520';
+function goWA(msg){
+ window.location.href=`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+}
+
+acceptBtn.onclick=()=>goWA('Aku mau bertahan, menunggu, dan sampai sejauh itu sama kamu.');
+
+const rejectBtn=document.getElementById('rejectBtn');
+rejectBtn.addEventListener('touchstart',()=>{
+ const x=(Math.random()*120)-60;
+ const y=(Math.random()*60)-30;
+ rejectBtn.style.transform=`translate(${x}px,${y}px)`;
+});
+
+rejectBtn.onclick=()=>goWA('Maaf, aku belum siap untuk sejauh itu.');
+</script>
+
+</body>
+</html>

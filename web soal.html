@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#e9e2da">
+    <title>📥 Download & Upload Tugas </title>
+    <style>
+        /* ===== SEMUA STYLE SAMA ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-light: #f0f0f0;
+            --bg-dark: #1a1a1e;
+            --card-light: #ffffff;
+            --card-dark: #2a2a2f;
+            --text-light: #202124;
+            --text-dark: #e0dcd5;
+            --accent-light: #1a73e8;
+            --accent-dark: #8ab4f8;
+            --border-light: #dadce0;
+            --border-dark: #3a3a40;
+            --success: #34a853;
+            --warning: #fbbc04;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-light);
+            font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            transition: background 0.4s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--card-light);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            transition: background 0.3s ease;
+            min-height: 500px;
+        }
+
+        body.dark .container {
+            background: var(--card-dark);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .controls {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        body.dark .control-btn {
+            background: rgba(30, 30, 35, 0.95);
+            color: #e0dcd5;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .personal-symbol {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            font-size: 0.65rem;
+            color: rgba(26, 115, 232, 0.2);
+            z-index: 100;
+            font-family: monospace;
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+
+        body.dark .personal-symbol {
+            color: rgba(138, 180, 248, 0.2);
+        }
+
+        .step {
+            display: none;
+            padding: 2rem 1.8rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .step-header .icon {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        body.dark .step-header h2 {
+            color: var(--text-dark);
+        }
+
+        .step-header p {
+            font-size: 0.9rem;
+            color: #5f6368;
+            margin-top: 0.3rem;
+        }
+
+        body.dark .step-header p {
+            color: #9aa0a6;
+        }
+
+        .file-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border-light);
+            transition: 0.2s;
+        }
+
+        body.dark .file-card {
+            background: #2a2a2f;
+            border-color: var(--border-dark);
+        }
+
+        .file-card .file-icon {
+            font-size: 2.5rem;
+        }
+
+        .file-card .file-info {
+            flex: 1;
+        }
+
+        .file-card .file-info .title {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        body.dark .file-card .file-info .title {
+            color: var(--text-dark);
+        }
+
+        .file-card .file-info .desc {
+            font-size: 0.75rem;
+            color: #80868b;
+        }
+
+        body.dark .file-card .file-info .desc {
+            color: #7a7f85;
+        }
+
+        .btn-download {
+            background: var(--accent-light);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        body.dark .btn-download {
+            background: #1a5a9e;
+        }
+
+        .btn-download:hover {
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-download:active {
+            transform: scale(0.98);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 1rem 0;
+        }
+
+        body.dark .upload-area {
+            border-color: var(--border-dark);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-light);
+            background: rgba(26, 115, 232, 0.04);
+        }
+
+        body.dark .upload-area:hover {
+            border-color: var(--accent-dark);
+            background: rgba(138, 180, 248, 0.06);
+        }
+
+        .upload-area .icon {
+            font-size: 2.5rem;
+            color: #80868b;
+        }
+
+        .upload-area p {
+            color: #5f6368;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        body.dark .upload-area p {
+            color: #9aa0a6;
+        }
+
+        .upload-area .file-name {
+            font-weight: 500;
+            color: var(--accent-light);
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-light);
+        }
+
+        body.dark .form-group label {
+            color: var(--text-dark);
+        }
+
+        .form-group textarea,
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--card-light);
+            color: var(--text-light);
+            transition: 0.2s;
+            resize: vertical;
+        }
+
+        body.dark .form-group textarea,
+        body.dark .form-group input[type="text"] {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .form-group textarea:focus,
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+        }
+
+        body.dark .form-group textarea:focus,
+        body.dark .form-group input[type="text"]:focus {
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.15);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        .btn-group .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--accent-light);
+            color: white;
+        }
+
+        body.dark .btn-primary {
+            background: #1a5a9e;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-light);
+        }
+
+        body.dark .btn-secondary {
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0,0,0,0.04);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+        }
+
+        .btn-view-tugas {
+            background: #8ab4f8;
+            color: #202124;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        body.dark .btn-view-tugas {
+            background: #1a5a9e;
+            color: white;
+        }
+
+        .btn-view-tugas:hover {
+            box-shadow: 0 2px 8px rgba(138, 180, 248, 0.3);
+            transform: scale(1.02);
+        }
+
+        .btn-view-tugas:active {
+            transform: scale(0.97);
+        }
+
+        .thankyou-content {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .thankyou-content .big-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .thankyou-content h2 {
+            font-size: 1.6rem;
+            color: var(--text-light);
+            margin: 0.5rem 0;
+        }
+
+        body.dark .thankyou-content h2 {
+            color: var(--text-dark);
+        }
+
+        .thankyou-content p {
+            color: #5f6368;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark .thankyou-content p {
+            color: #9aa0a6;
+        }
+
+        .gift-box {
+            background: linear-gradient(135deg, #fdf6e3, #fef9f0);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px solid #fbbc04;
+            text-align: center;
+        }
+
+        body.dark .gift-box {
+            background: linear-gradient(135deg, #2a2a1a, #1e1e14);
+            border-color: #fbbc04;
+        }
+
+        .gift-box .gift-icon {
+            font-size: 3rem;
+        }
+
+        .gift-box h3 {
+            color: var(--text-light);
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        body.dark .gift-box h3 {
+            color: var(--text-dark);
+        }
+
+        .gift-box p {
+            color: #5f6368;
+            font-size: 0.85rem;
+        }
+
+        body.dark .gift-box p {
+            color: #9aa0a6;
+        }
+
+        .btn-gift {
+            background: #fbbc04;
+            color: #202124;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            font-family: inherit;
+            margin-top: 0.5rem;
+        }
+
+        .btn-gift:hover {
+            box-shadow: 0 2px 12px rgba(251, 188, 4, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-gift:active {
+            transform: scale(0.97);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--card-light);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            animation: modalIn 0.3s ease;
+            text-align: center;
+        }
+
+        body.dark .modal-box {
+            background: var(--card-dark);
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-box .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-box h2 {
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+
+        body.dark .modal-box h2 {
+            color: var(--text-dark);
+        }
+
+        .modal-box p {
+            color: #5f6368;
+            font-size: 0.9rem;
+            margin: 0.5rem 0 1rem;
+            line-height: 1.5;
+        }
+
+        body.dark .modal-box p {
+            color: #9aa0a6;
+        }
+
+        .modal-box .btn {
+            padding: 10px 32px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: var(--accent-light);
+            color: white;
+        }
+
+        body.dark .modal-box .btn {
+            background: #1a5a9e;
+        }
+
+        .modal-link-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            word-break: break-all;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark .modal-link-box {
+            background: #2a2a2f;
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .modal-link-box a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+
+        body.dark .modal-link-box a {
+            color: var(--accent-dark);
+        }
+
+        .btn-copy-link {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            margin-top: 0.5rem;
+        }
+
+        .btn-copy-link:hover {
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+        }
+
+        .btn-copy-link:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 0.5rem; }
+            .step { padding: 1.5rem 1.2rem; }
+            .container { border-radius: 12px; }
+            .btn-group { flex-direction: column; }
+            .btn-group .btn { width: 100%; }
+            .controls { top: 10px; right: 10px; gap: 8px; }
+            .control-btn { width: 40px; height: 40px; font-size: 1.2rem; }
+            .file-card { padding: 1rem; flex-direction: column; text-align: center; }
+            .gift-box { padding: 1.2rem; }
+        }
+
+        @media (max-width: 380px) {
+            .step { padding: 1.2rem 0.8rem; }
+            .step-header h2 { font-size: 1.1rem; }
+            .upload-area { padding: 1.2rem; }
+        }
+
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-light);
+            transition: 0.3s;
+        }
+
+        body.dark .progress .dot {
+            background: var(--border-dark);
+        }
+
+        .progress .dot.active {
+            background: var(--accent-light);
+            transform: scale(1.2);
+        }
+
+        body.dark .progress .dot.active {
+            background: var(--accent-dark);
+        }
+
+        .progress .dot.done {
+            background: var(--success);
+        }
+
+        .file-preview {
+            display: none;
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            color: #2e7d32;
+            font-size: 0.85rem;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark .file-preview {
+            background: #1b3a1f;
+            color: #81c784;
+        }
+
+        .file-preview.show {
+            display: flex;
+        }
+
+        .btn-downloaded {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-downloaded:hover {
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+        }
+        .btn-downloaded:active {
+            transform: scale(0.98);
+        }
+        .btn-downloaded:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .download-status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+        body.dark .download-status {
+            color: #81c784;
+        }
+
+        .status-downloaded {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        body.dark .status-downloaded {
+            background: #1b3a1f;
+            color: #81c784;
+        }
+
+        .upload-progress {
+            display: none;
+            margin: 1rem 0;
+        }
+        .upload-progress.show {
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-light);
+            transition: width 0.3s;
+        }
+        body.dark .progress-bar-fill {
+            background: var(--accent-dark);
+        }
+        .progress-text {
+            font-size: 0.8rem;
+            color: #5f6368;
+            margin-top: 0.3rem;
+            text-align: center;
+        }
+        body.dark .progress-text {
+            color: #9aa0a6;
+        }
+
+        /* ===== STATUS TUGAS SUDAH DIKIRIM ===== */
+        .tugas-terkirim-badge {
+            display: none;
+            background: #e8f5e9;
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        body.dark .tugas-terkirim-badge {
+            background: #1b3a1f;
+            color: #81c784;
+            border-color: #2e7d32;
+        }
+
+        .tugas-terkirim-badge.show {
+            display: block;
+        }
+
+        .tugas-terkirim-badge .icon {
+            font-size: 2rem;
+        }
+
+        .tugas-terkirim-badge .title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0.3rem 0;
+        }
+
+        .tugas-terkirim-badge .info {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .btn-lanjutkan {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-lanjutkan:hover {
+            box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+            transform: scale(1.02);
+        }
+
+        .btn-lanjutkan:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <button class="control-btn" id="modeToggle" title="Mode malam/siang">🌙</button>
+</div>
+
+<div class="personal-symbol" id="personalSymbol">✦ IKAT ✦</div>
+
+<div class="container" id="appContainer">
+
+    <div style="padding: 1.5rem 1.8rem 0;">
+        <div class="progress">
+            <div class="dot active" id="dot1"></div>
+            <div class="dot" id="dot2"></div>
+            <div class="dot" id="dot3"></div>
+        </div>
+    </div>
+
+    <!-- ===== STEP 1: DOWNLOAD TUGAS ===== -->
+    <div class="step active" id="step1">
+        <div class="step-header">
+            <div class="icon">📥</div>
+            <h2>Download Tugas</h2>
+            <p>Silakan download file tugas terlebih dahulu</p>
+        </div>
+
+        <div class="file-card">
+            <div class="file-icon">📄</div>
+            <div class="file-info">
+                <div class="title" id="namaFileTugas">Tugas.pdf</div>
+                <div class="desc">📎 PDF • 2.4 MB • Deadline: 12 Juli 2026</div>
+            </div>
+        </div>
+
+        <button class="btn-download" id="downloadBtn">
+            ⬇️ Download Tugas
+        </button>
+
+        <button class="btn-downloaded" id="sudahDownloadBtn">
+            ✅ Saya sudah download, lanjutkan
+        </button>
+
+        <div class="download-status" id="downloadStatus"></div>
+
+        <div style="text-align: center; margin-top: 0.5rem;">
+            <button class="btn-secondary" style="padding: 10px 32px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; cursor: pointer; font-family: inherit; font-size: 0.9rem; color: var(--text-light);" id="selesaiStep1">
+                ✅ Selesai, lanjutkan →
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== STEP 2: UPLOAD TUGAS ===== -->
+    <div class="step" id="step2">
+        <div class="step-header">
+            <div class="icon">📤</div>
+            <h2>Upload Tugas</h2>
+            <p>Kirimkan hasil pengerjaan tugasmu</p>
+        </div>
+
+        <!-- ===== BADGE TUGAS SUDAH DIKIRIM ===== -->
+        <div class="tugas-terkirim-badge" id="tugasTerkirimBadge">
+            <div class="icon">✅</div>
+            <div class="title">Tugas Sudah Dikirim!</div>
+            <div class="info" id="badgeInfo">File: Tugas.pdf | Nama: -</div>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                💡 Anda tidak perlu upload ulang. Cukup isi nama dan lanjutkan.
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="namaSiswa" placeholder="Masukkan nama lengkap Anda">
+        </div>
+
+        <div class="form-group">
+            <label>Catatan (opsional)</label>
+            <textarea id="catatanTugas" rows="2" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="icon">📁</div>
+            <p>Klik atau seret file ke sini</p>
+            <p style="font-size: 0.75rem; color: #80868b;">Maks. 10MB (PDF, DOCX, JPG, PNG)</p>
+            <div class="file-name" id="fileName">Belum ada file dipilih</div>
+            <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png">
+        </div>
+
+        <div id="filePreview" class="file-preview">
+            <span>📎</span>
+            <span id="previewFileName">file.pdf</span>
+        </div>
+
+        <div id="uploadProgress" class="upload-progress">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Mengupload file...</div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" id="kembaliStep2">← Kembali</button>
+            <button class="btn btn-primary" id="kirimTugasBtn">📤 Kirim Tugas</button>
+            <button class="btn btn-success" id="selesaiStep2">✅ Selesai</button>
+        </div>
+
+        <!-- ===== TOMBOL LANJUTKAN (muncul setelah upload) ===== -->
+        <button class="btn-lanjutkan" id="btnLanjutkan" style="display: none;">
+            🚀 Lanjutkan ke Halaman Berikutnya →
+        </button>
+    </div>
+
+    <!-- ===== STEP 3: TERIMA KASIH ===== -->
+    <div class="step" id="step3">
+        <div class="thankyou-content">
+            <div class="big-icon">💖</div>
+            <h2>Terima Kasih!</h2>
+            <p>Tugasmu sudah berhasil dikirimkan.</p>
+            <p style="font-size: 0.85rem; color: #80868b;">Jangan lupa cek pengumuman untuk hasil selanjutnya.</p>
+
+            <button class="btn-view-tugas" id="lihatTugasBtn">
+                📂 Lihat Tugas Saya
+            </button>
+
+            <div class="gift-box">
+                <div class="gift-icon">🎁</div>
+                <h3>Ada Hadiah untukmu!</h3>
+                <p>Klik tombol di bawah untuk membuka kejutan spesial.</p>
+                <br>
+                <a href="#" id="giftLink" target="_blank" style="text-decoration: none;">
+                    <button class="btn-gift">🎀 Buka Hadiah</button>
+                </a>
+            </div>
+
+            <button class="btn-secondary" style="padding: 10px 32px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; cursor: pointer; font-family: inherit; font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-light);" onclick="location.reload()">
+                🔄 Kembali ke Awal
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-icon" id="modalIcon">✅</div>
+        <h2 id="modalTitle">Berhasil!</h2>
+        <p id="modalMessage">Tugas berhasil diupload.</p>
+        <button class="btn" onclick="closeConfirmModal()">Tutup</button>
+    </div>
+</div>
+
+<!-- MODAL LIHAT TUGAS -->
+<div id="lihatTugasModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-icon">📄</div>
+        <h2>📂 Tugas Anda</h2>
+        <p style="font-size: 0.85rem; color: #5f6368;">Klik link di bawah untuk melihat file tugas yang sudah diupload.</p>
+        
+        <div id="tugasInfoContainer">
+            <div class="modal-link-box" id="tugasInfoBox">
+                <p><strong>👤 Nama:</strong> <span id="tugasNama">-</span></p>
+                <p><strong>📄 File:</strong> <span id="tugasNamaFile">-</span></p>
+                <p><strong>📅 Waktu:</strong> <span id="tugasWaktu">-</span></p>
+                <hr style="margin: 0.5rem 0; border-color: var(--border-light);">
+                <p><strong>🔗 Link File:</strong></p>
+                <a href="#" id="tugasLink" target="_blank" style="color: var(--accent-light); word-break: break-all;">-</a>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem;">
+            <button class="btn-copy-link" id="copyLinkBtn">📋 Copy Link</button>
+            <button class="btn" onclick="closeLihatTugasModal()" style="background: var(--accent-light);">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<script type="importmap">
+{
+    "imports": {
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+    }
+}
+</script>
+
+<script type="module">
+    // ======================== IMPOR SUPABASE ========================
+    import { createClient } from '@supabase/supabase-js'
+
+    // ======================== SUPABASE CONFIG ========================
+    const supabaseUrl = 'https://dowhunbhiwutjmlqomdy.supabase.co'
+    const supabaseKey = 'sb_publishable_0yuG3wjxZI1ohlgbCCV1mQ_vSD5YDNk'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    console.log("🔗 Supabase Connected!")
+
+    // ======================== FIREBASE ========================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCS1jrZ0A6WzzPJE-Sg2tGXWVOkD7HeKF8",
+        authDomain: "loops-9ba98.firebaseapp.com",
+        databaseURL: "https://loops-9ba98-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "loops-9ba98",
+        storageBucket: "loops-9ba98.firebasestorage.app",
+        messagingSenderId: "171008414677",
+        appId: "1:171008414677:web:43448ced4f9263ec8f235c"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const firebaseDb = getDatabase(firebaseApp);
+    console.log("🔥 Firebase Connected!");
+
+    // ======================== PATH DATABASE ========================
+    const PATH_PESAN_LDR = 'pesan_pasangan_LDR';
+    const PATH_TUGAS = 'tugas_terkirim';
+    const PATH_UPLOAD_TUGAS_BARU = 'upload_tugas_baru';
+
+   // ======================== FILE SOAL ========================
+    const FILE_SOAL = "file.pdf";
+
+    // Tampilkan nama file
+    document.getElementById("namaFileTugas").textContent = FILE_SOAL.split("/").pop();
+
+    // Tombol Download
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+    window.open(FILE_SOAL, "_blank");
+    tandaiSudahDownload();
+    });
+
+    // ======================== MODE GELAP ========================
+    const modeToggle = document.getElementById('modeToggle');
+    let isDarkMode = false;
+
+    modeToggle.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+            modeToggle.textContent = '🌙';
+        } else {
+            document.body.classList.remove('dark');
+            modeToggle.textContent = '🌞';
+        }
+    });
+
+    // ======================== NAVIGASI STEP ========================
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function goToStep(step) {
+        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+        document.getElementById('step' + step).classList.add('active');
+        
+        for (let i = 1; i <= totalSteps; i++) {
+            const dot = document.getElementById('dot' + i);
+            dot.classList.remove('active', 'done');
+            if (i < step) dot.classList.add('done');
+            if (i === step) dot.classList.add('active');
+        }
+        
+        currentStep = step;
+        
+        if (window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate(10);
+        }
+    }
+
+    // ======================== STEP 1: DOWNLOAD ========================
+    const downloadBtn = document.getElementById('downloadBtn');
+    const sudahDownloadBtn = document.getElementById('sudahDownloadBtn');
+    const downloadStatus = document.getElementById('downloadStatus');
+    let isDownloaded = false;
+
+    if (localStorage.getItem('tugas_downloaded') === 'true') {
+        isDownloaded = true;
+        downloadStatus.innerHTML = '<span class="status-downloaded">✅ Sudah mendownload</span>';
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = '✅ Tugas Terdownload!';
+        downloadBtn.style.background = '#34a853';
+        document.getElementById('selesaiStep1').style.display = 'inline-block';
+        sudahDownloadBtn.style.display = 'none';
+    }
+
+    if (!namaFileDariURL) {
+        downloadBtn.addEventListener('click', () => {
+            const namaFile = document.getElementById('namaFileTugas').textContent;
+            window.open(namaFile, '_blank');
+            tandaiSudahDownload();
+        });
+    }
+
+    sudahDownloadBtn.addEventListener('click', () => {
+        tandaiSudahDownload();
+    });
+
+    function tandaiSudahDownload() {
+        isDownloaded = true;
+        localStorage.setItem('tugas_downloaded', 'true');
+        downloadStatus.innerHTML = '<span class="status-downloaded">✅ Sudah mendownload</span>';
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = '✅ Tugas Terdownload!';
+        downloadBtn.style.background = '#34a853';
+        document.getElementById('selesaiStep1').style.display = 'inline-block';
+        sudahDownloadBtn.style.display = 'none';
+        showConfirmModal('✅ Selesai!', 'Anda sudah mendownload tugas. Silakan lanjut ke halaman upload.');
+    }
+
+    document.getElementById('selesaiStep1').addEventListener('click', () => {
+        if (!isDownloaded) {
+            alert('⚠️ Harap download tugas terlebih dahulu atau klik tombol "Saya sudah download" untuk melanjutkan!');
+            return;
+        }
+        goToStep(2);
+    });
+
+    // ======================== STEP 2: UPLOAD ========================
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const filePreview = document.getElementById('filePreview');
+    const previewFileName = document.getElementById('previewFileName');
+    let selectedFile = null;
+    let lastUploadedData = null;
+    let isTugasTerkirim = false;
+
+    // Cek apakah sudah ada data tugas di localStorage
+    const storedData = localStorage.getItem('last_uploaded_tugas');
+    if (storedData) {
+        try {
+            lastUploadedData = JSON.parse(storedData);
+            isTugasTerkirim = true;
+            showTugasTerkirimBadge(lastUploadedData);
+        } catch (e) {
+            console.error('Gagal parse localStorage:', e);
+        }
+    }
+
+    uploadArea.addEventListener('click', () => {
+        if (isTugasTerkirim) {
+            alert('⚠️ Tugas Anda sudah dikirim! Tidak perlu upload ulang.\n\nCukup isi nama dan klik "Lanjutkan ke Halaman Berikutnya".');
+            return;
+        }
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (isTugasTerkirim) {
+            alert('⚠️ Tugas Anda sudah dikirim! Tidak perlu upload ulang.');
+            fileInput.value = '';
+            return;
+        }
+        if (e.target.files.length > 0) {
+            selectedFile = e.target.files[0];
+            const name = selectedFile.name;
+            fileName.textContent = '📎 ' + name;
+            previewFileName.textContent = name;
+            filePreview.classList.add('show');
+        }
+    });
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#1a73e8';
+        uploadArea.style.background = 'rgba(26,115,232,0.05)';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '';
+        uploadArea.style.background = '';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '';
+        uploadArea.style.background = '';
+        if (isTugasTerkirim) {
+            alert('⚠️ Tugas Anda sudah dikirim! Tidak perlu upload ulang.');
+            return;
+        }
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            selectedFile = e.dataTransfer.files[0];
+            const name = selectedFile.name;
+            fileName.textContent = '📎 ' + name;
+            previewFileName.textContent = name;
+            filePreview.classList.add('show');
+        }
+    });
+
+    document.getElementById('kembaliStep2').addEventListener('click', () => {
+        goToStep(1);
+    });
+
+    // ======================== FUNGSI SHOW BADGE ========================
+    function showTugasTerkirimBadge(data) {
+        const badge = document.getElementById('tugasTerkirimBadge');
+        const info = document.getElementById('badgeInfo');
+        const btnLanjutkan = document.getElementById('btnLanjutkan');
+        
+        badge.classList.add('show');
+        info.textContent = `📄 ${data.nama_file || 'Tugas.pdf'} | 👤 ${data.nama || '-'}`;
+        
+        // Sembunyikan tombol kirim dan upload area
+        document.getElementById('kirimTugasBtn').style.display = 'none';
+        document.getElementById('selesaiStep2').style.display = 'none';
+        uploadArea.style.opacity = '0.5';
+        uploadArea.style.cursor = 'not-allowed';
+        uploadArea.style.pointerEvents = 'none';
+        filePreview.classList.remove('show');
+        
+        // Tampilkan tombol lanjutkan
+        btnLanjutkan.style.display = 'block';
+        
+        isTugasTerkirim = true;
+    }
+
+    // ======================== UPLOAD KE SUPABASE STORAGE + FIREBASE ========================
+    async function uploadFile(file, namaSiswa, catatan) {
+        try {
+            const progressDiv = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressBarFill');
+            const progressText = document.getElementById('progressText');
+            progressDiv.classList.add('show');
+            progressFill.style.width = '0%';
+            progressText.textContent = '⏳ Mempersiapkan upload...';
+
+            const timestamp = Date.now();
+            const fileExt = file.name.split('.').pop();
+            const fileNameClean = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
+            const filePath = `tugas/${namaSiswa}/${timestamp}_${fileNameClean}.${fileExt}`;
+            
+            progressText.textContent = '📤 Upload ke Supabase...';
+            progressFill.style.width = '30%';
+
+            const { data: storageData, error: storageError } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (storageError) {
+                throw new Error(`Storage Error: ${storageError.message}`);
+            }
+
+            progressFill.style.width = '70%';
+            progressText.textContent = '📥 Mendapatkan link...';
+
+            const { data: urlData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(filePath);
+
+            const fileUrl = urlData.publicUrl;
+
+            progressFill.style.width = '85%';
+            progressText.textContent = '💾 Menyimpan ke Firebase...';
+
+            const dataTugas = {
+                nama: namaSiswa,
+                nama_file: file.name,
+                file_size: file.size,
+                file_type: file.type,
+                file_url: fileUrl,
+                file_path: filePath,
+                bucket: BUCKET_NAME,
+                catatan: catatan || '-',
+                waktu_upload: new Date().toLocaleString('id-ID'),
+                timestamp: timestamp,
+                status: 'terkirim'
+            };
+
+            const dbRef = ref(firebaseDb, PATH_UPLOAD_TUGAS_BARU);
+            const result = await push(dbRef, dataTugas);
+
+            lastUploadedData = {
+                ...dataTugas,
+                firebaseKey: result.key
+            };
+            
+            localStorage.setItem('last_uploaded_tugas', JSON.stringify(lastUploadedData));
+
+            progressFill.style.width = '100%';
+            progressText.textContent = '✅ Selesai!';
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Tampilkan badge dan sembunyikan upload area
+            showTugasTerkirimBadge(lastUploadedData);
+
+            return {
+                success: true,
+                fileUrl: fileUrl,
+                filePath: filePath,
+                firebaseKey: result.key,
+                data: dataTugas
+            };
+
+        } catch (error) {
+            console.error('❌ Error:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+
+    // ======================== FUNGSI TAMPILKAN TUGAS ========================
+    function tampilkanTugas() {
+        let data = lastUploadedData;
+        
+        if (!data) {
+            const stored = localStorage.getItem('last_uploaded_tugas');
+            if (stored) {
+                try {
+                    data = JSON.parse(stored);
+                } catch (e) {
+                    console.error('Gagal parse localStorage:', e);
+                }
+            }
+        }
+
+        if (!data) {
+            showConfirmModal(
+                '📭 Belum Ada Tugas', 
+                'Anda belum mengupload tugas apapun. Silakan upload tugas terlebih dahulu.',
+                '📭'
+            );
+            return;
+        }
+
+        document.getElementById('tugasNama').textContent = data.nama || '-';
+        document.getElementById('tugasNamaFile').textContent = data.nama_file || '-';
+        document.getElementById('tugasWaktu').textContent = data.waktu_upload || '-';
+        
+        const linkElement = document.getElementById('tugasLink');
+        linkElement.textContent = data.file_url || '-';
+        linkElement.href = data.file_url || '#';
+
+        document.getElementById('lihatTugasModal').classList.add('show');
+    }
+
+    // ======================== FUNGSI COPY LINK ========================
+    function copyLinkToClipboard() {
+        const linkElement = document.getElementById('tugasLink');
+        const link = linkElement.textContent;
+        
+        if (link && link !== '-') {
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Tercopy!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(() => {
+                const range = document.createRange();
+                range.selectNode(linkElement);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand('copy');
+                const btn = document.getElementById('copyLinkBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Tercopy!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+    }
+
+    // ======================== KIRIM TUGAS ========================
+    document.getElementById('kirimTugasBtn').addEventListener('click', async () => {
+        // Jika tugas sudah terkirim, cegah upload ulang
+        if (isTugasTerkirim) {
+            alert('⚠️ Tugas Anda sudah dikirim! Tidak perlu upload ulang.\n\nCukup isi nama dan klik "Lanjutkan ke Halaman Berikutnya".');
+            return;
+        }
+
+        const nama = document.getElementById('namaSiswa').value.trim();
+        const catatan = document.getElementById('catatanTugas').value.trim();
+
+        if (!nama) {
+            alert('⚠️ Harap masukkan nama lengkap Anda!');
+            document.getElementById('namaSiswa').focus();
+            return;
+        }
+
+        if (!selectedFile) {
+            alert('⚠️ Harap pilih file tugas terlebih dahulu!');
+            return;
+        }
+
+        if (selectedFile.size > 10 * 1024 * 1024) {
+            alert('⚠️ Ukuran file terlalu besar! Maksimal 10MB.');
+            return;
+        }
+
+        const kirimBtn = document.getElementById('kirimTugasBtn');
+        const originalText = kirimBtn.textContent;
+        kirimBtn.textContent = '⏳ Mengupload...';
+        kirimBtn.disabled = true;
+
+        try {
+            const result = await uploadFile(selectedFile, nama, catatan);
+
+            if (result.success) {
+                console.log('✅ Tugas tersimpan di path:', PATH_UPLOAD_TUGAS_BARU);
+                console.log('📎 Link file:', result.fileUrl);
+                console.log('📦 Bucket:', BUCKET_NAME);
+                
+                showConfirmModal(
+                    '✅ Berhasil!', 
+                    `Tugas "${selectedFile.name}" berhasil diupload.\n\n👤 Nama: ${nama}\n📦 Bucket: ${BUCKET_NAME}\n\n💡 Klik "Lanjutkan ke Halaman Berikutnya" untuk melanjutkan.`,
+                    '✅'
+                );
+                
+                document.getElementById('namaSiswa').value = '';
+                document.getElementById('catatanTugas').value = '';
+                fileName.textContent = 'Belum ada file dipilih';
+                filePreview.classList.remove('show');
+                selectedFile = null;
+                fileInput.value = '';
+
+                document.getElementById('uploadProgress').classList.remove('show');
+                document.getElementById('progressBarFill').style.width = '0%';
+
+            } else {
+                showConfirmModal(
+                    '⚠️ Gagal!', 
+                    `Terjadi kesalahan:\n${result.error}\n\nSilakan coba lagi.`,
+                    '⚠️'
+                );
+            }
+
+        } catch (error) {
+            console.error('❌ Error:', error);
+            showConfirmModal(
+                '⚠️ Gagal!', 
+                'Terjadi kesalahan saat mengupload tugas. Silakan coba lagi.',
+                '⚠️'
+            );
+        } finally {
+            kirimBtn.textContent = originalText;
+            kirimBtn.disabled = false;
+        }
+    });
+
+    // ======================== TOMBOL LANJUTKAN ========================
+    document.getElementById('btnLanjutkan').addEventListener('click', () => {
+        const nama = document.getElementById('namaSiswa').value.trim();
+        if (!nama) {
+            alert('⚠️ Harap isi nama lengkap Anda sebelum melanjutkan!');
+            document.getElementById('namaSiswa').focus();
+            return;
+        }
+        goToStep(3);
+    });
+
+    // ======================== SELESAI STEP 2 (LAMA) ========================
+    document.getElementById('selesaiStep2').addEventListener('click', () => {
+        const nama = document.getElementById('namaSiswa').value.trim();
+        if (!nama) {
+            alert('⚠️ Harap isi nama lengkap Anda sebelum selesai!');
+            document.getElementById('namaSiswa').focus();
+            return;
+        }
+        
+        // Jika tugas sudah terkirim, langsung ke step 3
+        if (isTugasTerkirim) {
+            goToStep(3);
+            return;
+        }
+        
+        // Jika belum upload, cek apakah ada file atau tidak
+        if (!selectedFile) {
+            alert('⚠️ Harap pilih file tugas terlebih dahulu atau klik "Kirim Tugas"!');
+            return;
+        }
+        
+        // Jika ada file tapi belum dikirim, minta kirim dulu
+        alert('⚠️ Silakan klik "Kirim Tugas" terlebih dahulu untuk mengupload file!');
+    });
+
+    // ======================== EVENT LIHAT TUGAS ========================
+    document.getElementById('lihatTugasBtn').addEventListener('click', tampilkanTugas);
+    document.getElementById('copyLinkBtn').addEventListener('click', copyLinkToClipboard);
+
+    // ======================== MODAL ========================
+    function showConfirmModal(title, message, icon = '✅') {
+        document.getElementById('modalIcon').textContent = icon;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('confirmModal').classList.add('show');
+    }
+
+    window.closeConfirmModal = function() {
+        document.getElementById('confirmModal').classList.remove('show');
+    };
+
+    function closeLihatTugasModal() {
+        document.getElementById('lihatTugasModal').classList.remove('show');
+    }
+    window.closeLihatTugasModal = closeLihatTugasModal;
+
+    document.getElementById('confirmModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeConfirmModal();
+    });
+
+    document.getElementById('lihatTugasModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLihatTugasModal();
+    });
+
+    // ======================== HADIAH ========================
+    const HADIAH_LINK = "https://open.spotify.com/playlist/5zqT7UuP5tHqQwWrXqYxZ?si=contoh";
+    document.getElementById('giftLink').href = HADIAH_LINK;
+
+    // ======================== HAPTIC ========================
+    function hapticFeedback() {
+        if (window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate(10);
+        }
+    }
+
+    document.querySelectorAll('button, .upload-area').forEach(el => {
+        el.addEventListener('click', hapticFeedback);
+    });
+
+    // ======================== LOAD ========================
+    window.addEventListener('load', () => {
+        if (!isDownloaded) {
+            document.getElementById('selesaiStep1').style.display = 'none';
+        }
+        
+        const stored = localStorage.getItem('last_uploaded_tugas');
+        if (stored) {
+            try {
+                lastUploadedData = JSON.parse(stored);
+                console.log('📂 Data tugas sebelumnya ditemukan di localStorage');
+                console.log('📦 Bucket:', lastUploadedData.bucket);
+            } catch (e) {
+                console.error('Gagal parse localStorage:', e);
+            }
+        }
+    });
+
+    console.log("%c📥 Download & Upload Tugas", "color: #1a73e8; font-size: 16px; font-weight: bold;");
+    console.log("%c📄 Nama file tugas: " + document.getElementById('namaFileTugas').textContent, "color: #34a853; font-size: 14px;");
+    console.log("%c📊 Data upload disimpan di path: " + PATH_UPLOAD_TUGAS_BARU, "color: #fbbc04; font-size: 14px;");
+    console.log("%c📦 Menggunakan bucket: " + BUCKET_NAME, "color: #8ab4f8; font-size: 14px;");
+    console.log("%c📁 Path yang sudah ada: " + PATH_PESAN_LDR + ", " + PATH_TUGAS, "color: #9aa0a6; font-size: 12px;");
+</script>
+</body>
+</html>
